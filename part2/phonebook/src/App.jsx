@@ -6,9 +6,20 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
+
+    const nameExists = persons.some(
+      (person) => person.name.toLowerCase() === newName.trim().toLowerCase(),
+    );
+
+    if (nameExists) {
+      alert(`${newName.trim()} is already added to phonebook`);
+      return;
+    }
+
     const personObject = {
-      name: newName,
+      name: newName.trim(),
     };
+
     setPersons(persons.concat(personObject));
     setNewName("");
   };
@@ -29,7 +40,6 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-
       {persons.map((person) => (
         <p key={person.name}>{person.name}</p>
       ))}

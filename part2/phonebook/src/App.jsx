@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import personService from "./services/persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
@@ -8,26 +8,31 @@ const App = () => {
   const [persons, setPersons] = useState([]);
   const [filter, setFilter] = useState("");
 
-  const personsToShow = filter
-    ? persons.filter((person) =>
-        person.name.toLowerCase().includes(filter.toLowerCase()),
-      )
-    : persons;
-
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data);
+    personService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
     });
   }, []);
+
+  const addPerson = (newPersonObject) => {
+    return personService.create(newPersonObject).then((returnedPerson) => {
+      setPersons(persons.concat(returnedPerson));
+    });
+  };
+
+  const personsToShow = filter
+    ? persons.filter((p) => p.name.toLowerCase().includes(filter.toLowerCase()))
+    : persons;
 
   return (
     <div>
       <h2>Phonebook</h2>
       <Filter filter={filter} setFilter={setFilter} />
 
-      <h2>add a new</h2>
-      <PersonForm persons={persons} setPersons={setPersons} />
-      <h2>Numbers</h2>
+      <h3>Add a new</h3>
+      <PersonForm createPerson={addPerson} persons={persons} />
+
+      <h3>Numbers</h3>
       <Persons personsToShow={personsToShow} />
     </div>
   );

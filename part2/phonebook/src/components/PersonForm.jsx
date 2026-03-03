@@ -1,62 +1,45 @@
-import axios from "axios";
 import { useState } from "react";
 
-const PersonForm = ({ persons, setPersons }) => {
+const PersonForm = ({ createPerson, persons }) => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
 
-  const addPerson = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
-    const nameExists = persons.some(
-      (person) => person.name.toLowerCase() === newName.trim().toLowerCase(),
-    );
+    const nameTrimmed = newName.trim();
+    const numberTrimmed = newNumber.trim();
 
-    const numberExists = persons.some(
-      (person) => person.number === newNumber.trim(),
-    );
-
-    if (numberExists) {
-      alert(`${newNumber.trim()} is already added to phonebook`);
+    if (!nameTrimmed || !numberTrimmed) {
+      alert("Please fill in both name and number.");
       return;
     }
 
-    if (nameExists) {
-      alert(`${newName.trim()} is already added to phonebook`);
+    if (
+      persons.some((p) => p.name.toLowerCase() === nameTrimmed.toLowerCase())
+    ) {
+      alert(`${nameTrimmed} is already added to phonebook`);
       return;
     }
 
-    if (newName.trim().length === 0 || newNumber.trim().length === 0) {
-      alert("Тhe name and number fields cannot be empty.");
-      return;
-    }
-
-    axios
-      .post("http://localhost:3001/persons", {
-        name: newName.trim(),
-        number: newNumber.trim(),
-      })
-      .then((response) => {
-        setPersons(persons.concat(response.data));
-        setNewName("");
-        setNewNumber("");
-      });
+    createPerson({ name: nameTrimmed, number: numberTrimmed }).then(() => {
+      setNewName("");
+      setNewNumber("");
+    });
   };
 
-  const handleNameChange = (event) => {
-    setNewName(event.target.value);
-  };
-
-  const handleNumberChange = (event) => {
-    setNewNumber(event.target.value);
-  };
   return (
-    <form onSubmit={addPerson}>
+    <form onSubmit={handleSubmit}>
       <div>
-        name: <input value={newName} onChange={handleNameChange} />
+        name:
+        <input value={newName} onChange={(e) => setNewName(e.target.value)} />
       </div>
       <div>
-        number: <input value={newNumber} onChange={handleNumberChange} />
+        number:
+        <input
+          value={newNumber}
+          onChange={(e) => setNewNumber(e.target.value)}
+        />
       </div>
       <div>
         <button type="submit">add</button>

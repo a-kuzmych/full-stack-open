@@ -20,6 +20,14 @@ const App = () => {
     });
   };
 
+  const deletePerson = (id, name) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      personService.deletePerson(id).then(() => {
+        setPersons(persons.filter((p) => p.id !== id));
+      });
+    }
+  };
+
   const personsToShow = filter
     ? persons.filter((p) => p.name.toLowerCase().includes(filter.toLowerCase()))
     : persons;
@@ -33,7 +41,7 @@ const App = () => {
       <PersonForm createPerson={addPerson} persons={persons} />
 
       <h3>Numbers</h3>
-      <Persons personsToShow={personsToShow} />
+      <Persons personsToShow={personsToShow} deletePerson={deletePerson} />
     </div>
   );
 };

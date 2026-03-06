@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const PersonForm = ({ createPerson, persons }) => {
+const PersonForm = ({ createPerson, updatePerson, persons }) => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
 
@@ -15,10 +15,18 @@ const PersonForm = ({ createPerson, persons }) => {
       return;
     }
 
-    if (
-      persons.some((p) => p.name.toLowerCase() === nameTrimmed.toLowerCase())
-    ) {
-      alert(`${nameTrimmed} is already added to phonebook`);
+    const existingPerson = persons.find(
+      (p) => p.name.toLowerCase() === nameTrimmed.toLowerCase(),
+    );
+
+    if (existingPerson) {
+      updatePerson(existingPerson.id, {
+        ...existingPerson,
+        number: numberTrimmed,
+      }).then(() => {
+        setNewName("");
+        setNewNumber("");
+      });
       return;
     }
 

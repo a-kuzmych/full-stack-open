@@ -28,6 +28,18 @@ const App = () => {
     }
   };
 
+  const updatePerson = (id, updatedPerson) => {
+    if (
+      window.confirm(
+        `${updatedPerson.name} is already added to phonebook, replace the old number with a new one?`,
+      )
+    ) {
+      return personService.update(id, updatedPerson).then((returnedPerson) => {
+        setPersons(persons.map((p) => (p.id === id ? returnedPerson : p)));
+      });
+    }
+  };
+
   const personsToShow = filter
     ? persons.filter((p) => p.name.toLowerCase().includes(filter.toLowerCase()))
     : persons;
@@ -38,7 +50,11 @@ const App = () => {
       <Filter filter={filter} setFilter={setFilter} />
 
       <h3>Add a new</h3>
-      <PersonForm createPerson={addPerson} persons={persons} />
+      <PersonForm
+        createPerson={addPerson}
+        updatePerson={updatePerson}
+        persons={persons}
+      />
 
       <h3>Numbers</h3>
       <Persons personsToShow={personsToShow} deletePerson={deletePerson} />

@@ -18,6 +18,10 @@ const App = () => {
     country.name.common.toLowerCase().includes(filter.toLowerCase()),
   );
 
+  const showCountry = (country) => {
+    setFilter(country.name.common);
+  };
+
   return (
     <>
       <Filter filter={filter} setFilter={setFilter} />
@@ -27,7 +31,7 @@ const App = () => {
       )}
 
       {filteredCountries.length <= 10 && filteredCountries.length > 1 && (
-        <List countries={filteredCountries} />
+        <List countriesList={filteredCountries} onShowCountry={showCountry} />
       )}
 
       {filteredCountries.length === 1 && (

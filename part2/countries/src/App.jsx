@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import countriesService from "./services/countries";
+import getWeather from "./services/weather";
 import Filter from "./components/Filter";
 import Content from "./components/Content";
 import List from "./components/List";
+import Weather from "./components/Weather";
 
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [filter, setFilter] = useState("");
+  const [weather, setWeather] = useState(null);
 
   useEffect(() => {
     countriesService.getAll().then((initialCountries) => {
@@ -22,6 +25,15 @@ const App = () => {
     setFilter(country.name.common);
   };
 
+  useEffect(() => {
+    if (filteredCountries.length === 1) {
+      const capital = filteredCountries[0].capital[0];
+      getWeather(capital).then((weatherData) => {
+        setWeather(weatherData);
+      });
+    }
+  }, [filteredCountries]);
+
   return (
     <>
       <Filter filter={filter} setFilter={setFilter} />
@@ -35,7 +47,16 @@ const App = () => {
       )}
 
       {filteredCountries.length === 1 && (
-        <Content country={filteredCountries[0]} />
+        <>
+          <Content country={filteredCountries[0]} />
+          <Weather
+            capital={filteredCountries[0].capital[0]}
+            temperature={weather?.temperature}
+            icon={weather?.icon}
+            description={weather?.description}
+            wind={weather?.wind}
+          />
+        </>
       )}
     </>
   );

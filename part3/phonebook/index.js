@@ -3,7 +3,7 @@ const app = express();
 const PORT = 3001;
 
 const notes = [
-  ({
+  {
     id: "1",
     name: "Arto Hellas",
     number: "040-123456",
@@ -22,7 +22,7 @@ const notes = [
     id: "4",
     name: "Mary Poppendieck",
     number: "39-23-6423122",
-  }),
+  },
 ];
 
 app.use(express.json());
@@ -33,6 +33,13 @@ app.get("/", (req, res) => {
 
 app.get("/api/persons", (req, res) => {
   res.json(notes);
+});
+
+app.get("/info", (req, res) => {
+  const date = new Date();
+  res.send(
+    `<p>Phonebook has info for ${notes.length} people</p><p>${date}</p>`,
+  );
 });
 
 app.listen(PORT, () => {

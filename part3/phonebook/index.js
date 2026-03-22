@@ -60,6 +60,18 @@ app.delete("/api/persons/:id", (req, res) => {
   res.status(204).end();
 });
 
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+
+  const newNote = {
+    id: Math.floor(Math.random() * 1000000).toString(),
+    name: body.name,
+    number: body.number,
+  };
+  notes.push(newNote);
+  res.status(201).json(newNote);
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

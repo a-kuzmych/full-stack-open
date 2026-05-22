@@ -1,7 +1,10 @@
+require('dotenv').config()
 const express = require("express");
 const morgan = require("morgan");
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+const Person = require('./models/person')
 
 let notes = [
   {
@@ -43,7 +46,9 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/persons", (req, res) => {
-  res.json(notes);
+  Person.find({}).then(persons => {
+    res.json(persons)
+  })
 });
 
 app.get("/info", (req, res) => {

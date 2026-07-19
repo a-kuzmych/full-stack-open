@@ -77,6 +77,28 @@ app.post("/api/persons", (req, res, next) => {
     .catch((error) => next(error));
 });
 
+app.put("/api/persons/:id", (req, res, next) => {
+  const body = req.body;
+
+  Person.findById(req.params.id)
+    .then((person) => {
+      if (!person) {
+        return res.status(404).end();
+      }
+
+      person.name = body.name;
+      person.number = body.number;
+
+      person
+        .save()
+        .then((updatedPerson) => {
+          res.json(updatedPerson);
+        })
+        .catch((error) => next(error));
+    })
+    .catch((error) => next(error));
+});
+
 app.delete("/api/persons/:id", (req, res, next) => {
   Person.findByIdAndDelete(req.params.id)
     .then(() => {

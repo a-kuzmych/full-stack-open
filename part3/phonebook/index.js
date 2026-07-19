@@ -18,10 +18,6 @@ app.use(
 
 app.use(express.static("dist"));
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
 app.get("/api/persons", (req, res) => {
   Person.find({}).then((persons) => {
     res.json(persons);

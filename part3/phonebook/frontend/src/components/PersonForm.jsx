@@ -23,17 +23,27 @@ const PersonForm = ({ createPerson, updatePerson, persons }) => {
       updatePerson(existingPerson.id, {
         ...existingPerson,
         number: numberTrimmed,
-      }).then(() => {
-        setNewName("");
-        setNewNumber("");
-      });
+      })
+        .then(() => {
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          alert(
+            `Failed to update ${existingPerson.name}: ${error.response.data.error}`,
+          );
+        });
       return;
     }
 
-    createPerson({ name: nameTrimmed, number: numberTrimmed }).then(() => {
-      setNewName("");
-      setNewNumber("");
-    });
+    createPerson({ name: nameTrimmed, number: numberTrimmed })
+      .then(() => {
+        setNewName("");
+        setNewNumber("");
+      })
+      .catch((error) => {
+        alert(`Failed to add ${nameTrimmed}: ${error.response.data.error}`);
+      });
   };
 
   return (

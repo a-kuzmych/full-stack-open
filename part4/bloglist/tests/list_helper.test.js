@@ -52,3 +52,47 @@ describe('total likes', () => {
     assert.strictEqual(result, 17)
   })
 })
+
+describe('favorite blog', () => {
+  test('of empty list is null', () => {
+    const blogs = []
+
+    const result = listHelper.favoriteBlog(blogs)
+    assert.strictEqual(result, null)
+  })
+
+  test('when list has only one blog equals that blog', () => {
+    const blogs = [
+      {
+        _id: '5a422aa71b54a676234d17f8',
+        title: 'Go To Statement Considered Harmful',
+        author: 'Edsger W. Dijkstra',
+        url: 'http://www.u.arizona.edu/~webster/Applets/GoTo.html',
+        likes: 5,
+      },
+    ]
+
+    const result = listHelper.favoriteBlog(blogs)
+    assert.strictEqual(result, blogs[0])
+  })
+
+  test('of a bigger list is calculated right', () => {
+    const blogs = [
+      {
+        title: 'Go To Statement Considered Harmful',
+        author: 'Edsger W. Dijkstra',
+        url: 'http://www.u.arizona.edu/~webster/Applets/GoTo.html',
+        likes: 5,
+      },
+      {
+        title: 'Canonical string reduction',
+        author: 'Edsger W. Dijkstra',
+        url: 'http://www.cs.utexas.edu/users/EWD/ewd06xx/EWD687.Node.html',
+        likes: 12,
+      },
+    ]
+
+    const result = listHelper.favoriteBlog(blogs)
+    assert.deepStrictEqual(result, blogs[1])
+  })
+})

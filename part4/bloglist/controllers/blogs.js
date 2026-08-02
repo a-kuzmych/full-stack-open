@@ -11,13 +11,18 @@ blogsRouter.post('/', async (request, response) => {
   const body = request.body
 
   if (!body.title || !body.url) {
-    return response.status(400).json({ error: 'title or url missing' })
+    return response.status(400).end()
   }
 
   const blog = new Blog(request.body)
 
   const result = await blog.save()
   response.status(201).json(result)
+})
+
+blogsRouter.delete('/:id', async (request, response) => {
+  await Blog.findByIdAndDelete(request.params.id)
+  response.status(204).end()
 })
 
 module.exports = blogsRouter

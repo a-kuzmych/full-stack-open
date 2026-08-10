@@ -2,8 +2,10 @@ const assert = require('node:assert')
 const { test, after, beforeEach, describe } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const bcrypt = require('bcrypt')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const { initialBlogs } = require('../utils/blogs_for_test')
 
 const api = supertest(app)
@@ -132,6 +134,60 @@ describe('updating a blog', () => {
     assert.strictEqual(updatedBlog.author, updatedBlogData.author)
     assert.strictEqual(updatedBlog.url, updatedBlogData.url)
     assert.strictEqual(updatedBlog.likes, updatedBlogData.likes)
+  })
+})
+
+describe('when there is initially one user in db', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', name: 'Superuser', passwordHash })
+
+    await user.save()
+  })
+
+  test('creation succeeds with a fresh username', async () => {
+    const usersAtStart = await api.get('/api/users')
+
+    const newUser = {
+      username: 'newuser',
+      name: 'New User',
+      password: 'password123'
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await api.get('/api/users')
+    assert.strictEqual(usersAtEnd.body.length, usersAtStart.body.length + 1)
+
+    const usernames = usersAtEnd.body.map(u => u.username)
+    assert(usernames.includes(newUser.username))
+  })
+
+  test('creation fails with proper statuscode and message if username already taken', async () => {
+    const usersAtStart = await api.get('/api/users')
+
+    const newUser = {
+      username: 'root',
+      name: 'Superuser',
+      password: 'password123'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await api.get('/api/users')
+    assert.strictEqual(result.body.error, 'expected `username` to be unique')
+
+    assert.strictEqual(usersAtEnd.body.length, usersAtStart.body.length)
   })
 })
 

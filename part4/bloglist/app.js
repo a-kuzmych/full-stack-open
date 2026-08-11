@@ -20,6 +20,7 @@ async function connectToDatabase() {
 
 connectToDatabase()
 
+app.use(middleware.tokenExtractor)
 app.use(express.json())
 app.use(middleware.requestLogger)
 

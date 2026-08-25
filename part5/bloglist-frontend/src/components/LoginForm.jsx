@@ -1,4 +1,4 @@
-import Notification from "./Notification";
+import Notification from './Notification'
 
 const LoginForm = ({
   handleSubmit,
@@ -36,7 +36,7 @@ const LoginForm = ({
         <button type="submit">login</button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default LoginForm;
+export default LoginForm

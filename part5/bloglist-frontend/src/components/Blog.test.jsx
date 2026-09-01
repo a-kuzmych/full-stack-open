@@ -25,7 +25,7 @@ test('renders title and author, but not url or likes by default', () => {
 
 test('clicking the view button shows url and likes', async () => {
   const blog = {
-    title: 'Test Blog Title', 
+    title: 'Test Blog Title',
     author: 'Test Author',
     url: 'http://testurl.com',
     likes: 5,

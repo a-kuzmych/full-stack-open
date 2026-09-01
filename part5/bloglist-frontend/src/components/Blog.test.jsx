@@ -42,7 +42,7 @@ test('clicking the view button shows url and likes', async () => {
 
   const mockHandleLike = vi.fn()
 
-  render(<Blog blog={blog} handleLike={mockHandleLike} user={testActiveUser} />)
+  render(<Blog blog={blog} addLikes={mockHandleLike} user={testActiveUser} />)
 
   const user = userEvent.setup()
   const viewButton = screen.getByText('view')
@@ -53,4 +53,36 @@ test('clicking the view button shows url and likes', async () => {
 
   expect(urlElement).toBeInTheDocument()
   expect(likesElement).toBeInTheDocument()
+})
+
+test('clicking the like button twice calls event handler twice', async () => {
+  const blog = {
+    title: 'Test Blog Title',
+    author: 'Test Author',
+    url: 'http://testurl.com',
+    likes: 5,
+    user: {
+      name: 'Test User',
+      username: 'testuser',
+    },
+  }
+
+  const testActiveUser = {
+    username: 'testuser',
+    name: 'Test User'
+  }
+
+  const mockHandleLike = vi.fn()
+
+  render(<Blog blog={blog} addLikes={mockHandleLike} user={testActiveUser} />)
+
+  const user = userEvent.setup()
+  const viewButton = screen.getByText('view')
+  await user.click(viewButton)
+
+  const likeButton = screen.getByText('like')
+  await user.click(likeButton)
+  await user.click(likeButton)
+
+  expect(mockHandleLike.mock.calls).toHaveLength(2)
 })

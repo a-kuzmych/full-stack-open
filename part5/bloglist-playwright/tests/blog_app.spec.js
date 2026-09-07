@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require("@playwright/test");
-const { loginWith } = require("./helper");
+const { loginWith, createBlog } = require("./helper");
 
 describe("Blog app", () => {
   beforeEach(async ({ page, request }) => {
@@ -31,9 +31,18 @@ describe("Blog app", () => {
       await expect(errorDiv).toHaveCSS("border-style", "solid");
       await expect(errorDiv).toHaveCSS("color", "rgb(255, 0, 0)");
 
-      await expect(
-        page.getByText("testuser logged in"),
-      ).not.toBeVisible();
+      await expect(page.getByText("testuser logged in")).not.toBeVisible();
+    });
+  });
+
+  describe("When logged in", () => {
+    beforeEach(async ({ page }) => {
+      await loginWith(page, "testuser", "password");
+    });
+
+    test("a new blog can be created", async ({ page }) => {
+      await createBlog(page, "Test Blog", "Test Author", "http://testblog.com");
+      await expect(page.getByText("Test Blog by Test Author added")).toBeVisible();
     });
   });
 });

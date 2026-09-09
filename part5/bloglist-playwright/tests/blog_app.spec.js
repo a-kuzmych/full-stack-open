@@ -42,7 +42,28 @@ describe("Blog app", () => {
 
     test("a new blog can be created", async ({ page }) => {
       await createBlog(page, "Test Blog", "Test Author", "http://testblog.com");
-      await expect(page.getByText("Test Blog by Test Author added")).toBeVisible();
+      await expect(
+        page.getByText("Test Blog by Test Author added"),
+      ).toBeVisible();
+    });
+
+    describe("and a blog exists", () => {
+      beforeEach(async ({ page }) => {
+        await createBlog(
+          page,
+          "Existing Blog",
+          "Existing Author",
+          "http://existingblog.com",
+        );
+      });
+
+      test("it can be liked", async ({ page }) => {
+        const blogText = page.getByText("Existing Blog");
+        const blogElement = blogText.locator("..");
+        await blogElement.getByRole("button", { name: "view" }).click();
+        await blogElement.getByRole("button", { name: "like" }).click();
+        await expect(blogElement.getByText("likes 1")).toBeVisible();
+      });
     });
   });
 });

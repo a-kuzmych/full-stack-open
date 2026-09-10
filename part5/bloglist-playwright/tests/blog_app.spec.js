@@ -65,6 +65,21 @@ describe("Blog app", () => {
         await expect(blogElement.getByText("likes 1")).toBeVisible();
       });
 
+      test("it cannot be deleted by another user", async ({ page, request }) => {
+        const anotherUser = {
+          name: "Another User",
+          username: "anotheruser",
+          password: "password",
+        };
+        await request.post("/api/users", { data: anotherUser });
+        await page.getByRole("button", { name: "logout" }).click();
+        await loginWith(page, "anotheruser", "password");
+        await page.getByRole("button", { name: "view" }).click();
+        await expect(
+          page.getByRole("button", { name: "remove" }),
+        ).not.toBeVisible();
+      });
+
       test("it can be deleted by the creator", async ({ page }) => {
         const blogText = page.getByText("Existing Blog");
         const blogElement = blogText.locator("..");

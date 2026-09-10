@@ -64,6 +64,16 @@ describe("Blog app", () => {
         await blogElement.getByRole("button", { name: "like" }).click();
         await expect(blogElement.getByText("likes 1")).toBeVisible();
       });
+
+      test("it can be deleted by the creator", async ({ page }) => {
+        const blogText = page.getByText("Existing Blog");
+        const blogElement = blogText.locator("..");
+        await page.reload();
+        await blogElement.getByRole("button", { name: "view" }).click();
+        page.on("dialog", (dialog) => dialog.accept());
+        await blogElement.getByRole("button", { name: "remove" }).click();
+        await expect(page.getByRole("button", { name: "view" })).not.toBeVisible();
+      });
     });
   });
 });

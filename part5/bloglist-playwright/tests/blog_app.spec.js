@@ -90,5 +90,40 @@ describe("Blog app", () => {
         await expect(page.getByRole("button", { name: "view" })).not.toBeVisible();
       });
     });
+
+    describe("and multiple blogs exist", () => {
+      beforeEach(async ({ page }) => {
+        await createBlog(
+          page,
+          "Blog One",
+          "Author One",
+          "http://blogone.com",
+        );
+        await createBlog(
+          page,
+          "Blog Two",
+          "Author Two",
+          "http://blogtwo.com",
+        );
+      });
+
+      test("blogs are ordered by likes in descending order", async ({ page }) => {
+        const blogOne = page.getByText("Blog One").locator("..");
+        const blogTwo = page.getByText("Blog Two").locator("..");
+
+        await blogOne.getByRole("button", { name: "view" }).click();
+        await blogOne.getByRole("button", { name: "like" }).click();
+        await blogTwo.getByRole("button", { name: "view" }).click();
+        await expect(blogOne.getByText("likes 1")).toBeVisible();
+        await blogTwo.getByRole("button", { name: "like" }).click();
+        await expect(blogTwo.getByText("likes 1")).toBeVisible();
+        await blogTwo.getByRole("button", { name: "like" }).click();
+        await expect(blogTwo.getByText("likes 2")).toBeVisible();
+
+        const box1 = await blogOne.boundingBox();
+        const box2 = await blogTwo.boundingBox();
+        expect(box2.y).toBeLessThan(box1.y);
+      });
+    });
   });
 });

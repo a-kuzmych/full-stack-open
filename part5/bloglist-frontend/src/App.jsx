@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
+import { Routes, Route, Link, Navigate, useMatch } from "react-router-dom";
 import "../index.css";
 import Bloglist from "./components/Bloglist";
+import Blog from "./components/Blog";
 import LoginForm from "./components/LoginForm";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -72,7 +73,7 @@ const App = () => {
     setBlogs(blogs.map((b) => (b.id === blogId ? returnedBlog : b)));
   };
 
-  const handleRemove = async (blogId) => {
+  const deleteBlog = async (blogId) => {
     const blogToRemove = blogs.find((b) => b.id === blogId);
     if (window.confirm(`Remove blog "${blogToRemove.title}" by ${blogToRemove.author}?`)) {
       await blogService.remove(blogId);
@@ -89,8 +90,12 @@ const App = () => {
 
   const padding = { padding: 5 };
 
+  const match = useMatch("/blogs/:id");
+
+  const blogToShow = match ? blogs.find((blog) => blog.id === match.params.id) : null;
+
   return (
-    <Router>
+    <div>
       <div>
         <Link style={padding} to="/">blogs</Link>
         {user ? (
@@ -110,7 +115,7 @@ const App = () => {
               blogs={blogs}
               addBlog={addBlog}
               addLikes={addLikes}
-              handleRemove={handleRemove}
+              deleteBlog={deleteBlog}
               user={user}
               notification={notification}
             />
@@ -133,8 +138,19 @@ const App = () => {
             )
           }
         />
+        <Route
+          path="/blogs/:id"
+          element={
+            <Blog
+              blog={blogToShow}
+              addLikes={addLikes}
+              deleteBlog={deleteBlog}
+              user={user}
+            />
+          }
+        />
       </Routes>
-    </Router>
+    </div>
   );
 };
 

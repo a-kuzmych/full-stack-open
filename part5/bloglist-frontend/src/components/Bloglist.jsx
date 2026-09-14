@@ -1,10 +1,11 @@
 import { useRef } from "react";
+import { Link } from "react-router-dom";
 import Blog from "./Blog";
 import BlogForm from "./BlogForm";
 import Togglable from "./Togglable";
 import Notification from "./Notification";
 
-const Bloglist = ({ blogs, addBlog, addLikes, handleRemove, user, notification }) => {
+const Bloglist = ({ blogs, addBlog, addLikes, deleteBlog, user, notification }) => {
   const blogFormRef = useRef();
 
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
@@ -19,15 +20,15 @@ const Bloglist = ({ blogs, addBlog, addLikes, handleRemove, user, notification }
       <div>
         <h2>blogs</h2>
         <Notification message={notification.message} type={notification.type} />
-        {sortedBlogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            addLikes={addLikes}
-            handleRemove={handleRemove}
-            user={user}
-          />
-        ))}
+        <ul>
+          {sortedBlogs.map((blog) => (
+            <li key={blog.id}>
+              <Link to={`/blogs/${blog.id}`}>
+                {blog.title} by {blog.author}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     );
   }
@@ -42,15 +43,15 @@ const Bloglist = ({ blogs, addBlog, addLikes, handleRemove, user, notification }
       </Togglable>
 
       <div>
-        {sortedBlogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            addLikes={addLikes}
-            user={user}
-            handleRemove={handleRemove}
-          />
-        ))}
+        <ul>
+          {sortedBlogs.map((blog) => (
+            <li key={blog.id}>
+              <Link to={`/blogs/${blog.id}`}>
+                {blog.title} by {blog.author}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

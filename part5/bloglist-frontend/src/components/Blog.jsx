@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 
-const Blog = ({ blog, addLikes, handleRemove, user }) => {
+const Blog = ({ blog, addLikes, deleteBlog, user }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -9,10 +10,11 @@ const Blog = ({ blog, addLikes, handleRemove, user }) => {
     marginBottom: 5,
   }
 
-  const [visible, setVisible] = useState(false)
+  const id = useParams().id
+  const navigate = useNavigate()
 
-  const toggleVisibility = () => {
-    setVisible(!visible)
+  if (!blog) {
+    return null
   }
 
   const handleLike = () => {
@@ -25,42 +27,39 @@ const Blog = ({ blog, addLikes, handleRemove, user }) => {
     addLikes(blog.id, updatedBlog)
   }
 
-  if (visible) {
-    return (
-      <div style={blogStyle}>
-        <div>
-          {blog.title} {blog.author}{' '}
-          <button onClick={toggleVisibility}>hide</button>
-        </div>
-        <div>{blog.url}</div>
-        <div>
-          likes {blog.likes} <button onClick={handleLike}>like</button>
-        </div>
-        <div>{blog.user.name}</div>
-        {user && blog.user.username === user.username && (
-          <button
-            onClick={() => handleRemove(blog.id)}
-            style={{
-              backgroundColor: 'blue',
-              color: 'white',
-              border: 'none',
-              padding: '5px 10px',
-              cursor: 'pointer',
-              borderRadius: '5px',
-            }}
-          >
-            remove
-          </button>
-        )}
-      </div>
-    )
-  }
+  const handleDelete = () => {
+    if (window.confirm(`Delete blog "${blog.title}"?`)) {
+      deleteBlog(blog.id);
+      navigate('/');
+    }
+  };
 
   return (
-    <div style={blogStyle}>
-      {blog.title} {blog.author}{' '}
-      <button onClick={toggleVisibility}>view</button>
-    </div>
+    <li key={blog.id}>
+      <h2>{`${blog.author}: ${blog.title}`}</h2>
+      <div>{blog.url}</div>
+      <div>
+        likes {blog.likes} {user && (
+          <button onClick={handleLike}>like</button>
+        )}
+      </div>
+      <div>Added by {blog.user.name}</div>
+      {user && blog.user.username === user.username && (
+        <button
+          onClick={handleDelete}
+          style={{
+            backgroundColor: 'blue',
+            color: 'white',
+            border: 'none',
+            padding: '5px 10px',
+            cursor: 'pointer',
+            borderRadius: '5px',
+          }}
+        >
+          remove
+        </button>
+      )}
+    </li>
   )
 }
 

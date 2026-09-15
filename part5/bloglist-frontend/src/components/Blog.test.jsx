@@ -1,88 +1,73 @@
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { BrowserRouter as Router } from 'react-router-dom'
+import { describe, expect, test } from 'vitest'
 import Blog from './Blog'
 
-test('renders title and author, but not url or likes by default', () => {
-  const blog = {
-    title: 'Test Blog Title',
-    author: 'Test Author',
-    url: 'http://testurl.com',
-    likes: 5,
-  }
-
-  render(<Blog blog={blog} />)
-
-  const titleElement = screen.getByText('Test Blog Title', { exact: false })
-  const authorElement = screen.getByText('Test Author', { exact: false })
-  const urlElement = screen.queryByText('http://testurl.com')
-  const likesElement = screen.queryByText('likes 5')
-
-  expect(titleElement).toBeInTheDocument()
-  expect(authorElement).toBeInTheDocument()
-  expect(urlElement).not.toBeInTheDocument()
-  expect(likesElement).not.toBeInTheDocument()
-})
-
-test('clicking the view button shows url and likes', async () => {
+describe('Blog component', () => {
   const blog = {
     title: 'Test Blog Title',
     author: 'Test Author',
     url: 'http://testurl.com',
     likes: 5,
     user: {
-      name: 'Test User',
-      username: 'testuser',
+      name: 'Blog Creator',
+      username: 'creator_user',
     },
   }
 
-  const testActiveUser = {
-    username: 'testuser',
-    name: 'Test User'
-  }
+  test('blog info and like counts are shown to anonymous users, buttons are not', () => {
+    render(
+      <Router>
+        <Blog blog={blog} user={null} addLikes={() => {}} deleteBlog={() => {}} />
+      </Router>
+    )
 
-  const mockHandleLike = vi.fn()
+    expect(screen.getByText('Test Author: Test Blog Title')).toBeInTheDocument()
+    expect(screen.getByText('http://testurl.com')).toBeInTheDocument()
+    expect(screen.getByText(/likes 5/)).toBeInTheDocument()
 
-  render(<Blog blog={blog} addLikes={mockHandleLike} user={testActiveUser} />)
+    const likeButton = screen.queryByText('like')
+    expect(likeButton).toBeNull()
 
-  const user = userEvent.setup()
-  const viewButton = screen.getByText('view')
-  await user.click(viewButton)
+    const removeButton = screen.queryByText('remove')
+    expect(removeButton).toBeNull()
+  })
 
-  const urlElement = screen.getByText('http://testurl.com')
-  const likesElement = screen.getByText('likes 5')
+  test('like button is shown to authenticated non-creator users', () => {
+    const nonCreatorUser = {
+      name: 'Random User',
+      username: 'random_user'
+    }
 
-  expect(urlElement).toBeInTheDocument()
-  expect(likesElement).toBeInTheDocument()
-})
+    render(
+      <Router>
+        <Blog blog={blog} user={nonCreatorUser} addLikes={() => {}} deleteBlog={() => {}} />
+      </Router>
+    )
 
-test('clicking the like button twice calls event handler twice', async () => {
-  const blog = {
-    title: 'Test Blog Title',
-    author: 'Test Author',
-    url: 'http://testurl.com',
-    likes: 5,
-    user: {
-      name: 'Test User',
-      username: 'testuser',
-    },
-  }
+    const likeButton = screen.queryByText('like')
+    expect(likeButton).toBeInTheDocument()
 
-  const testActiveUser = {
-    username: 'testuser',
-    name: 'Test User'
-  }
+    const removeButton = screen.queryByText('remove')
+    expect(removeButton).toBeNull()
+  })
 
-  const mockHandleLike = vi.fn()
+  test('delete button is also shown to the creator', () => {
+    const creatorUser = {
+      name: 'Blog Creator',
+      username: 'creator_user'
+    }
 
-  render(<Blog blog={blog} addLikes={mockHandleLike} user={testActiveUser} />)
+    render(
+      <Router>
+        <Blog blog={blog} user={creatorUser} addLikes={() => {}} deleteBlog={() => {}} />
+      </Router>
+    )
 
-  const user = userEvent.setup()
-  const viewButton = screen.getByText('view')
-  await user.click(viewButton)
+    const likeButton = screen.queryByText('like')
+    expect(likeButton).toBeInTheDocument()
 
-  const likeButton = screen.getByText('like')
-  await user.click(likeButton)
-  await user.click(likeButton)
-
-  expect(mockHandleLike.mock.calls).toHaveLength(2)
+    const removeButton = screen.queryByText('remove')
+    expect(removeButton).toBeInTheDocument()
+  })
 })

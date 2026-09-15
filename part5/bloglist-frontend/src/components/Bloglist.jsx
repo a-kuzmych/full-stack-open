@@ -37,11 +37,6 @@ const Bloglist = ({ blogs, addBlog, addLikes, deleteBlog, user, notification }) 
     <div>
       <h2>blogs</h2>
       <Notification message={notification.message} type={notification.type} />
-
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm createBlog={handleCreateBlog} />
-      </Togglable>
-
       <div>
         <ul>
           {sortedBlogs.map((blog) => (

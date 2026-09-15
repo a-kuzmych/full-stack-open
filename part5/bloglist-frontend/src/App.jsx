@@ -1,9 +1,17 @@
 import { useState, useEffect } from "react";
-import { Routes, Route, Link, Navigate, useMatch } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Link,
+  Navigate,
+  useMatch,
+  useNavigate,
+} from "react-router-dom";
 import "../index.css";
 import Bloglist from "./components/Bloglist";
 import Blog from "./components/Blog";
 import LoginForm from "./components/LoginForm";
+import BlogForm from "./components/BlogForm";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -20,6 +28,8 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -51,6 +61,7 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
+    navigate("/");
   };
 
   const addBlog = async (blogObject) => {
@@ -75,7 +86,11 @@ const App = () => {
 
   const deleteBlog = async (blogId) => {
     const blogToRemove = blogs.find((b) => b.id === blogId);
-    if (window.confirm(`Remove blog "${blogToRemove.title}" by ${blogToRemove.author}?`)) {
+    if (
+      window.confirm(
+        `Remove blog "${blogToRemove.title}" by ${blogToRemove.author}?`,
+      )
+    ) {
       await blogService.remove(blogId);
       setBlogs(blogs.filter((b) => b.id !== blogId));
       setNotification({
@@ -92,18 +107,31 @@ const App = () => {
 
   const match = useMatch("/blogs/:id");
 
-  const blogToShow = match ? blogs.find((blog) => blog.id === match.params.id) : null;
+  const blogToShow = match
+    ? blogs.find((blog) => blog.id === match.params.id)
+    : null;
 
   return (
     <div>
       <div>
-        <Link style={padding} to="/">blogs</Link>
+        <Link style={padding} to="/">
+          blogs
+        </Link>
+        {user && (
+          <span>
+            <Link style={padding} to="/create">
+              create new
+            </Link>
+          </span>
+        )}
         {user ? (
           <span>
             <button onClick={handleLogout}>logout</button>
           </span>
         ) : (
-          <Link style={padding} to="/login">login</Link>
+          <Link style={padding} to="/login">
+            login
+          </Link>
         )}
       </div>
 
@@ -149,6 +177,7 @@ const App = () => {
             />
           }
         />
+        <Route path="/create" element={<BlogForm createBlog={addBlog} />} />
       </Routes>
     </div>
   );

@@ -1,20 +1,11 @@
-import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom'
+import { Card, CardContent, Typography, Button, Box, Link } from '@mui/material'
 
 const Blog = ({ blog, addLikes, deleteBlog, user }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
-
-  const id = useParams().id;
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   if (!blog) {
-    return null;
+    return null
   }
 
   const handleLike = () => {
@@ -22,43 +13,59 @@ const Blog = ({ blog, addLikes, deleteBlog, user }) => {
       ...blog,
       likes: blog.likes + 1,
       user: blog.user.id,
-    };
+    }
 
-    addLikes(blog.id, updatedBlog);
-  };
+    addLikes(blog.id, updatedBlog)
+  }
 
   const handleDelete = () => {
     if (window.confirm(`Delete blog "${blog.title}"?`)) {
-      deleteBlog(blog.id);
-      navigate("/");
+      deleteBlog(blog.id)
+      navigate('/')
     }
-  };
+  }
 
   return (
-    <li key={blog.id}>
-      <h2>{`${blog.author}: ${blog.title}`}</h2>
-      <div>{blog.url}</div>
-      <div>
-        likes {blog.likes} {user && <button onClick={handleLike}>like</button>}
-      </div>
-      <div>Added by {blog.user.name}</div>
-      {user && blog.user.username === user.username && (
-        <button
-          onClick={handleDelete}
-          style={{
-            backgroundColor: "blue",
-            color: "white",
-            border: "none",
-            padding: "5px 10px",
-            cursor: "pointer",
-            borderRadius: "5px",
-          }}
-        >
-          remove
-        </button>
-      )}
-    </li>
-  );
-};
+    <Card sx={{ mt: 3, mb: 3, border: '1px solid #e0e0e0', boxShadow: 1, borderRadius: 1 }}>
+      <CardContent>
+        <Typography variant="h5" component="h2" gutterBottom>
+          {blog.title}
+        </Typography>
 
-export default Blog;
+        <Typography variant="body1" color="text.secondary" gutterBottom>
+          by {blog.author}
+        </Typography>
+
+        <Box sx={{ mb: 1 }}>
+          <Link href={blog.url} target="_blank" rel="noopener noreferrer" underline="hover">
+            {blog.url}
+          </Link>
+        </Box>
+
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Added by {blog.user?.name}
+        </Typography>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            {blog.likes} likes
+          </Typography>
+
+          {user && (
+            <Button variant="outlined" size="small" onClick={handleLike}>
+              LIKE
+            </Button>
+          )}
+
+          {user && blog.user?.username === user.username && (
+            <Button variant="outlined" color="error" size="small" onClick={handleDelete}>
+              REMOVE
+            </Button>
+          )}
+        </Box>
+      </CardContent>
+    </Card>
+  )
+}
+
+export default Blog

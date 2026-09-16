@@ -1,27 +1,27 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Container, TextField, Button } from "@mui/material";
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Container, TextField, Button } from '@mui/material'
 
 const BlogForm = ({ createBlog }) => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const addBlog = (event) => {
-    event.preventDefault();
+    event.preventDefault()
     createBlog({
       title,
       author,
       url,
-    });
+    })
 
-    setTitle("");
-    setAuthor("");
-    setUrl("");
-    navigate("/");
-  };
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+    navigate('/')
+  }
 
   return (
     <Container>
@@ -56,7 +56,7 @@ const BlogForm = ({ createBlog }) => {
         </Button>
       </form>
     </Container>
-  );
-};
+  )
+}
 
-export default BlogForm;
+export default BlogForm

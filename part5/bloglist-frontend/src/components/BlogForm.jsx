@@ -1,30 +1,30 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { TextField, Button } from '@mui/material'
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Container, TextField, Button } from "@mui/material";
 
 const BlogForm = ({ createBlog }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [url, setUrl] = useState("");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const addBlog = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     createBlog({
       title,
       author,
-      url
-    })
+      url,
+    });
 
-    setTitle('')
-    setAuthor('')
-    setUrl('')
-    navigate('/')
-  }
+    setTitle("");
+    setAuthor("");
+    setUrl("");
+    navigate("/");
+  };
 
   return (
-    <div>
+    <Container>
       <h2>create new blog</h2>
       <form onSubmit={addBlog}>
         <TextField
@@ -55,8 +55,8 @@ const BlogForm = ({ createBlog }) => {
           create
         </Button>
       </form>
-    </div>
-  )
-}
+    </Container>
+  );
+};
 
-export default BlogForm
+export default BlogForm;

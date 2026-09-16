@@ -8,6 +8,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import "../index.css";
+import { Container, AppBar, Toolbar, Typography, Button } from "@mui/material";
 import Bloglist from "./components/Bloglist";
 import Blog from "./components/Blog";
 import LoginForm from "./components/LoginForm";
@@ -112,28 +113,33 @@ const App = () => {
     : null;
 
   return (
-    <div>
-      <div>
-        <Link style={padding} to="/">
-          blogs
-        </Link>
-        {user && (
-          <span>
-            <Link style={padding} to="/create">
+    <Container>
+      <AppBar position="static" color="primary">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Blog App
+          </Typography>
+          <Button color="inherit" component={Link} to="/">
+            blogs
+          </Button>
+          {user && (
+            <Button color="inherit" component={Link} to="/create">
               create new
-            </Link>
-          </span>
-        )}
-        {user ? (
-          <span>
-            <button onClick={handleLogout}>logout</button>
-          </span>
-        ) : (
-          <Link style={padding} to="/login">
-            login
-          </Link>
-        )}
-      </div>
+            </Button>
+          )}
+          {user ? (
+            <span>
+              <Button color="inherit" onClick={handleLogout}>
+                logout
+              </Button>
+            </span>
+          ) : (
+            <Button color="inherit" component={Link} to="/login">
+              login
+            </Button>
+          )}
+        </Toolbar>
+      </AppBar>
 
       <Routes>
         <Route
@@ -179,7 +185,7 @@ const App = () => {
         />
         <Route path="/create" element={<BlogForm createBlog={addBlog} />} />
       </Routes>
-    </div>
+    </Container>
   );
 };
 

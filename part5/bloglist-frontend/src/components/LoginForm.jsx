@@ -1,5 +1,5 @@
 import Notification from './Notification'
-import { TextField, Button } from '@mui/material'
+import { Container, TextField, Button } from '@mui/material'
 
 const LoginForm = ({
   handleSubmit,
@@ -10,7 +10,7 @@ const LoginForm = ({
   notification,
 }) => {
   return (
-    <div>
+    <Container>
       <h2>Log in to application</h2>
       <Notification message={notification.message} type={notification.type} />
       <form onSubmit={handleSubmit}>
@@ -35,7 +35,7 @@ const LoginForm = ({
           login
         </Button>
       </form>
-    </div>
+    </Container>
   )
 }
 
